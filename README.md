@@ -1,8 +1,3 @@
-Of course! Here's the **full `README.md` and `requirements.txt`** properly inside one code block, cleanly formatted:
-
----
-
-```markdown
 # Summarization of a Stack of Papers using LLMs (SSPL)
 
 ## Overview

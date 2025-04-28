@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSPL</title>
+    <link rel="stylesheet" href="../static/CSS Files/main-styles.css">
+</head>
+<body>
+    <!--Controls entire body of site-->
+    <div class="main_body">
+        <h1>Summarization of a Stack of Papers using LLMs (SSPL)</h1>
+        <p id="Intro_line">Summarize your documents in a few minutes</p>
+        
+        <!--Contains everything on the white square-->
+        <div class="Options">
+
+            <!--Uploads the dashed square section-->
+            <div class="upload" id="uploadArea">
+
+                <!--Creates the upload icon-->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="upload-icon">
+                    <path d="M12 16v-8m0 0l-4 4m4-4l4 4M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+
+                <h2>Upload Files</h2>
+            </div>
+
+            <!--initiates file upload-->
+            <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
+                <input type="file" name="file" id="fileInput" accept=".pdf" style="display: none;" multiple>
+                <button type="submit" class="start_sum">Upload and Summarize</button>
+            </form>
+
+            <!--Line that separates section-->
+            <div class="line"></div>
+
+            <!--Controls title for section-->
+            <h2>Files to Summarize:</h2>
+
+            <!--Stores the uploaded files-->
+            <ul id="fileList"></ul>
+
+            <!--Line that separates section-->
+            <div class="line"></div>
+
+            <!--Section that stores updated summary-->
+            <div class="completed_sum">
+                <h2>Competed Summary</h2>
+
+                <!-- Loading Section (initially hidden) -->
+                <div class="loading_section" id="loadingSection" style="display: none;">
+                    <div class="progress-container">
+                        <svg class="spinner" viewBox="0 0 50 50">
+                            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"/>
+                        </svg>
+                    </div>
+                    <p>Summarizing your documents...</p>
+                </div>
+
+                <!-- View Summary Button (initially hidden) -->
+                <!-- <div class="view_summary" id="viewSummary" style="display: none;">
+                    <button class="start_sum">View Summary</button>
+                </div>
+
+                <div class="view_summary">
+                    <button class="start_sum" onclick="window.location.href='/view_graph'">View Knowledge Graph</button>
+                </div> -->
+
+                <!-- Summary Actions Row display: flex; gap: 10px; margin-top: 15px;-->
+                <div class="view_summary" id="viewSummary" style="display: none; ">
+                    <button class="start_sum" onclick="window.location.href='/get_summary'">View Summary</button>
+                    <button class="start_sum" onclick="window.location.href='/view_combined'">Combined Summary</button>
+                    <button class="start_sum" onclick="window.location.href='/view_graph'">View Knowledge Graph</button>
+                </div>
+
+                
+            </div>
+        </div> <!-- End of .Options -->
+    </div> <!-- End of .main_body -->
+</body>
+</html>
+
+<!--Connects Javascript File-->
+<script src="../static/Javascript Files/main-script.js"></script>

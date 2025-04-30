@@ -93,5 +93,8 @@ def view_combined():
     return send_file(path, mimetype='text/plain') if os.path.exists(path) else ("Not found", 404)
 
 
+# if __name__ == '__main__':
+#      app.run(debug=True)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, host='0.0.0.0', port=5000)

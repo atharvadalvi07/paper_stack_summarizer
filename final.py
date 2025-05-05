@@ -136,8 +136,12 @@ def main():
 
     logger.info("Generating individual summaries...")
     individual_summaries = {}
-    for name, text in papers.items():
+    # for name, text in papers.items():
+    #     individual_summaries[name] = summarize_text(text, summarizer)
+    for i, (name, text) in enumerate(papers.items()):
         individual_summaries[name] = summarize_text(text, summarizer)
+        print(f"Summarizing Paper number {i + 1} - {((i + 1) / len(papers)) * 100:.2f}% Completed")
+
 
     logger.info("Generating combined summary...")
     combined_summary = generate_combined_summary(papers, summarizer)

@@ -36,33 +36,48 @@ README.md            # Project documentation
    cd <project-folder>
    ```
 
-2. **Create a Virtual Environment (Recommended)**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # For Mac/Linux
-   venv\\Scripts\\activate   # For Windows
-   ```
-
-3. **Install Required Packages**
+2. **Install Required Packages**
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Download spaCy Language Model**
+3. **Download spaCy Language Model**
    ```bash
    python -m spacy download en_core_web_sm
    ```
 
-5. **Run the Flask App**
+4. **Run the Flask App**
    ```bash
    python implementation.py
    ```
 
-6. **Access the Web Interface**
+5. **Access the Web Interface**
    Open your browser and go to:
    ```
    http://127.0.0.1:5000/
    ```
+
+---
+
+## Docker Deployment
+
+If you prefer deploying using Docker, follow the steps below.
+
+### 1. Build the Docker image
+
+In the root directory of the project, run the following command to build the Docker image:
+
+```bash
+docker build -t paper-summarization-app .
+```
+
+### 2. Run the Docker container
+
+Start the Docker container by running:
+
+```bash
+docker run -p 5000:5000 paper-summarization-app
+```
 
 ---
 
@@ -89,14 +104,38 @@ See `requirements.txt`.
 
 ---
 
-## Future Enhancements
-- Interactive graph visualization (e.g., with PyVis).
-- Summarization model upgrade (e.g., `bart-large-cnn`).
-- User authentication for file uploads.
+## API Endpoints
+
+### 1. `/upload`
+
+* **Method**: POST
+* **Description**: Upload PDF files for processing.
+* **Request**:
+
+  * Files: PDF files to be uploaded.
+* **Response**: A message indicating that the files have been received.
+
+### 2. `/start_summary`
+
+* **Method**: POST
+* **Description**: Start the summarization and knowledge graph generation process.
+* **Request**:
+
+  * Files: PDF files to be processed.
+* **Response**: A message indicating the process has started.
+
+### 3. `/check_progress`
+
+* **Method**: GET
+* **Description**: Check the current progress of the summarization task.
+* **Response**: The current processing progress (e.g., percentage of PDFs processed).
 
 ---
 
-## License
-MIT License © 2025
 
-```
+## Future Enhancements
+- Interactive graph visualisation (e.g., with PyVis).
+- Summarisation model upgrade (e.g., `bart-large-cnn`).
+- User authentication for file uploads.
+
+---

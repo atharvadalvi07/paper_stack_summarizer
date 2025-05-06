@@ -5,26 +5,40 @@ import subprocess
 from werkzeug.utils import secure_filename
 import sys
 
+
+# Initialize the Flask app
 app = Flask(__name__)
 
+
+# Define folder paths for storing uploaded papers and results
 UPLOAD_FOLDER = 'papers'
 RESULTS_FOLDER = 'results'
 SUMMARY_FILE = os.path.join(RESULTS_FOLDER, 'summaries.txt')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
+
+# Dictionary to track the processing status of the summarization task
 processing_status = {
     'in_progress': False,
     'done': False
 }
 
+
+
 # Ensure required folders exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULTS_FOLDER, exist_ok=True)
 
+
+# Route to render the main page (index)
 @app.route('/')
 def index():
     return render_template('main.html')
 
+
+
+# Route to handle file uploads
 @app.route('/upload', methods=['POST'])
 def upload_file():
     file = request.files.get('file')
@@ -40,6 +54,9 @@ def upload_file():
 
     return jsonify({'status': 'uploaded', 'filename': filename}), 200
 
+
+
+# Route to start the summarization process
 @app.route('/start_summary', methods=['POST'])
 def start_summary():
     if processing_status['in_progress']:
@@ -63,10 +80,16 @@ def start_summary():
     threading.Thread(target=run_summary_pipeline).start()
     return jsonify({'status': 'started'}), 202
 
+
+
+# Route to check the current status of the summarization task
 @app.route('/check_progress')
 def check_progress():
     return jsonify(processing_status)
 
+
+
+# Route to retrieve the generated summary (if available)
 @app.route('/get_summary')
 def get_summary():
     if os.path.exists(SUMMARY_FILE):
@@ -74,12 +97,16 @@ def get_summary():
             return f.read()
     return "Summary not ready", 404
 
+
+# Route to download the generated summary file
 @app.route('/download_summary')
 def download_summary():
     if os.path.exists(SUMMARY_FILE):
         return send_file(SUMMARY_FILE, as_attachment=True)
     return "Summary file not found", 404
 
+
+# Route to view the knowledge graph image (if generated)
 @app.route('/view_graph')
 def view_graph():
     graph_path = os.path.join(RESULTS_FOLDER, 'graph.png')
@@ -87,13 +114,14 @@ def view_graph():
         return send_file(graph_path, mimetype='image/png')
     return "Graph not available", 404
 
-@app.route('/view_combined')
+
+# Route to download the combined summary file
 def view_combined():
     path = os.path.join(RESULTS_FOLDER, 'combined_summary.txt')
-    return send_file(path, mimetype='text/plain') if os.path.exists(path) else ("Not found", 404)
+    if os.path.exists(path):
+        return send_file(path, as_attachment=True)
+    return "Combined summary file not found", 404
 
 if __name__ == '__main__':
     app.run(debug=True)
 
-# if __name__ == '__main__':
-#     app.run(debug=False, host='0.0.0.0', port=5000)

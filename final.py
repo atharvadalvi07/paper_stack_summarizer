@@ -13,7 +13,7 @@ import logging
 from tqdm import tqdm
 import time
 
-# Configure logging
+# Configure logging for error tracking and status updates
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,10 @@ except LookupError:
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
 
+
+############################################################################################################################
+
+# Function to extract text from a given PDF file
 def extract_text_from_pdf(pdf_path):
     text = ""
     try:
@@ -36,16 +40,30 @@ def extract_text_from_pdf(pdf_path):
         logger.error(f"Error reading {pdf_path}: {e}")
     return text
 
+
+
+############################################################################################################################
+
+# Function to clean the extracted text (remove unnecessary sections)
 def clean_text(text):
     text = re.sub(r"(Table of Contents|References|Bibliography).*", "", text, flags=re.IGNORECASE | re.DOTALL)
     text = re.sub(r"\n+", "\n", text)
     return text.strip()
 
+
+############################################################################################################################
+
+# Function to process each PDF: extract and clean its text
 def process_pdf(file_path):
     raw_text = extract_text_from_pdf(file_path)
     cleaned_text = clean_text(raw_text)
     return os.path.basename(file_path), cleaned_text if len(cleaned_text.split()) > 100 else None
 
+
+
+############################################################################################################################
+
+# Function to load all papers from a directory and process them using threads for efficiency
 def load_papers_from_pdfs(directory):
     pdf_files = [os.path.join(directory, f) for f in os.listdir(directory) if f.lower().endswith('.pdf')]
     papers = {}
@@ -56,6 +74,12 @@ def load_papers_from_pdfs(directory):
             papers[result[0]] = result[1]
     return papers
 
+
+
+
+############################################################################################################################
+
+# Function to build a knowledge graph based on named entities in the papers
 def build_knowledge_graph(papers):
     graph = nx.Graph()
     sentence_map = defaultdict(str)
@@ -69,12 +93,25 @@ def build_knowledge_graph(papers):
                     sentence_map[(ents[i], ents[j])] = sent.text
     return graph, sentence_map
 
+
+
+
+
+############################################################################################################################
+
+# Function to generate a combined summary of all papers using a pre-trained transformer model
 def generate_combined_summary(papers, summarizer, max_length=150, min_length=50):
     full_text = " ".join(papers.values())
     chunks = split_text_into_chunks(full_text, max_chunk_length=512)
     summaries = summarizer(chunks, max_length=max_length, min_length=min_length, do_sample=False)
     return " ".join([s['summary_text'] for s in summaries])
 
+
+
+
+############################################################################################################################
+
+# Function to split the text into chunks for summarization
 def split_text_into_chunks(text, max_chunk_length=512):
     sentences = nltk.sent_tokenize(text)
     chunks, current_chunk = [], []
@@ -90,11 +127,24 @@ def split_text_into_chunks(text, max_chunk_length=512):
         chunks.append(" ".join(current_chunk))
     return chunks
 
+
+
+
+############################################################################################################################
+
+# Function to summarize a given text
 def summarize_text(text, summarizer, max_length=80, min_length=30, chunk_size=512):
     chunks = split_text_into_chunks(text, chunk_size)
     summaries = summarizer(chunks, max_length=max_length, min_length=min_length, do_sample=False)
     return " ".join([s['summary_text'] for s in summaries])
 
+
+
+
+
+############################################################################################################################
+
+# Function to visualize the knowledge graph (graph of named entity relationships)
 def visualize_knowledge_graph(graph, output_file="results/graph.png", top_n=70):
     top_nodes = sorted(graph.degree, key=lambda x: x[1], reverse=True)[:top_n]
     subgraph = graph.subgraph([n for n, _ in top_nodes])
@@ -118,6 +168,10 @@ def visualize_knowledge_graph(graph, output_file="results/graph.png", top_n=70):
     plt.close()
 
 
+
+
+
+############################################################################################################################
 def main():
     start_time = time.time()
     os.makedirs("results", exist_ok=True)
@@ -136,8 +190,6 @@ def main():
 
     logger.info("Generating individual summaries...")
     individual_summaries = {}
-    # for name, text in papers.items():
-    #     individual_summaries[name] = summarize_text(text, summarizer)
     for i, (name, text) in enumerate(papers.items()):
         individual_summaries[name] = summarize_text(text, summarizer)
         print(f"Summarizing Paper number {i + 1} - {((i + 1) / len(papers)) * 100:.2f}% Completed")

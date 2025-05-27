@@ -1,10 +1,6 @@
 # LLMotive : Summarization of a Stack of Papers using LLMs (SSPL)
 
 ## Overview
-
-This project is made for the class CS 4366 Senior Capstone Project.
-Team Members (Group 7) - Atharva Dalvi, Khushi Nankani, Arianna Matienzo, Olu Ogunnirian
-
 This project provides a web-based system to upload, summarize, and visualize a collection of research papers.
 
 The system:
